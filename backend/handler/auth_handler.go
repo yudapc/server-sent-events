@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"chat-app-backend/repository"
+	"chat-app-backend/serializer"
 	"chat-app-backend/types"
 
 	"github.com/dgrijalva/jwt-go"
@@ -67,7 +68,12 @@ func (h *AuthHandler) Login(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error signing token"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{"token": t})
+	dataUser := serializer.UserSerializer{
+		ID:       storedUser.ID,
+		Username: storedUser.Username,
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{"token": t, "user": dataUser})
 }
 
 func (h *AuthHandler) ForgotPassword(c echo.Context) error {

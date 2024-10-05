@@ -23,8 +23,8 @@ func NewRoomHandler(roomRepo *repository.RoomRepository, userRepo *repository.Us
 }
 
 func (h *RoomHandler) CreateRoom(c echo.Context) error {
-	var room types.Room
-	if err := c.Bind(&room); err != nil {
+	var payload serializer.PayloadCreateRoomSerializer
+	if err := c.Bind(&payload); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
@@ -38,7 +38,16 @@ func (h *RoomHandler) CreateRoom(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Database execution error"})
 	}
 
-	err = h.roomRepo.CreateRoom(&room, int(user.ID))
+	userTo, err := h.userRepo.GetUserByUsername(payload.To)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Database execution error"})
+	}
+
+	room := types.Room{
+		Name: payload.Name,
+	}
+
+	err = h.roomRepo.CreateRoom(&room, int(user.ID), int(userTo.ID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Database execution error"})
 	}

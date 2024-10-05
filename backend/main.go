@@ -61,7 +61,7 @@ func main() {
 	messages.PUT("/:id", chatHandler.UpdateMessage)
 
 	// Route events
-	e.GET("/events", sse.SSEHandler)
+	e.GET("/events/:roomid", sse.SSEHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))

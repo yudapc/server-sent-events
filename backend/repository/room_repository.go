@@ -26,19 +26,21 @@ func (r *RoomRepository) CreateRoomOnly(room *types.Room) error {
 	return nil
 }
 
-func (r *RoomRepository) CreateRoom(room *types.Room, userID int) error {
+func (r *RoomRepository) CreateRoom(room *types.Room, userID int, userIDTo int) error {
 	err := r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(room).Error; err != nil {
 			return err
 		}
 
-		roomUser := &types.RoomUser{
-			RoomID: room.ID,
-			UserID: userID,
+		roomUsers := []types.RoomUser{
+			{RoomID: room.ID, UserID: userID},
+			{RoomID: room.ID, UserID: userIDTo},
 		}
 
-		if err := tx.Create(roomUser).Error; err != nil {
-			return err
+		for _, roomUser := range roomUsers {
+			if err := tx.Create(&roomUser).Error; err != nil {
+				return err
+			}
 		}
 
 		return nil

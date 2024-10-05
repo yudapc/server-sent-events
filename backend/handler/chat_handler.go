@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -32,15 +33,17 @@ func NewChatHandler(chatRepo *repository.ChatRepository, userRepo *repository.Us
 // }
 
 func (h *ChatHandler) CreateMessage(c echo.Context) error {
-	var msg serializer.PayloadCreateChatSerializer
-	if err := c.Bind(&msg); err != nil {
+	var payload serializer.PayloadCreateChatSerializer
+	if err := c.Bind(&payload); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
-	var payloadMessage types.Message
-	payloadMessage.Timestamp = time.Now()
-	payloadMessage.Content = msg.Content
-	payloadMessage.RoomID = msg.RoomID
+	var dataMessage types.Message
+	dataMessage.Timestamp = time.Now()
+	dataMessage.Content = payload.Content
+	dataMessage.RoomID = payload.RoomID
+
+	fmt.Println(dataMessage)
 
 	username, err := helper.GetUsernameFromToken(c)
 	if err != nil {
@@ -52,16 +55,23 @@ func (h *ChatHandler) CreateMessage(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed to get user"})
 	}
 
-	payloadMessage.UserID = int(user.ID)
+	dataMessage.UserID = int(user.ID)
 
-	_, err = h.chatRepo.CreateMessage(payloadMessage)
+	_, err = h.chatRepo.CreateMessage(dataMessage)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Failed create message"})
 	}
 
-	sse.Manager.BroadcastMessage(payloadMessage)
+	dataMessageBroadcast := serializer.MessageSerializer{
+		ID:        dataMessage.ID,
+		Content:   dataMessage.Content,
+		Timestamp: dataMessage.Timestamp,
+		UserName:  username,
+		RoomID:    dataMessage.RoomID,
+	}
+	sse.Manager.BroadcastMessage(dataMessageBroadcast)
 
-	return c.JSON(http.StatusCreated, msg)
+	return c.JSON(http.StatusCreated, payload)
 }
 
 func (h *ChatHandler) UpdateMessage(c echo.Context) error {
@@ -76,7 +86,19 @@ func (h *ChatHandler) UpdateMessage(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
-	sse.Manager.BroadcastUpdate(msg)
+	username, err := helper.GetUsernameFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error getting username from token"})
+	}
+
+	dataMessageBroadcast := serializer.MessageSerializer{
+		ID:        msg.ID,
+		Content:   msg.Content,
+		Timestamp: msg.Timestamp,
+		UserName:  username,
+		RoomID:    msg.RoomID,
+	}
+	sse.Manager.BroadcastUpdate(dataMessageBroadcast)
 
 	return c.JSON(http.StatusOK, msg)
 }
