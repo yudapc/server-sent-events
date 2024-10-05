@@ -49,6 +49,7 @@ func main() {
 	rooms := e.Group("/rooms")
 	rooms.Use(middleware.JWTWithConfig(config))
 	rooms.POST("", roomHandler.CreateRoom)
+	rooms.GET("", roomHandler.GetRooms)
 	rooms.GET("/:id", roomHandler.GetRoom)
 	rooms.PUT("/:id", roomHandler.UpdateRoom)
 	rooms.DELETE("/:id", roomHandler.DeleteRoom)

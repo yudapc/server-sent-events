@@ -55,6 +55,29 @@ func (h *RoomHandler) CreateRoom(c echo.Context) error {
 	return c.JSON(http.StatusCreated, room)
 }
 
+func (h *RoomHandler) GetRooms(c echo.Context) error {
+	username, err := helper.GetUsernameFromToken(c)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error getting username from token"})
+	}
+
+	user, err := h.userRepo.GetUserByUsername(username)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Database execution error"})
+	}
+
+	rooms, err := h.roomRepo.GetRoomsByUserID(int(user.ID))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, err.Error())
+	}
+
+	response := map[string]interface{}{
+		"rooms": rooms,
+	}
+
+	return c.JSON(http.StatusOK, response)
+}
+
 func (h *RoomHandler) GetRoom(c echo.Context) error {
 	id := c.Param("id")
 	roomID, err := uuid.FromString(id)

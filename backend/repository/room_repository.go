@@ -74,6 +74,29 @@ func (r *RoomRepository) GetRoomUsersByRoomID(id uuid.UUID) ([]types.RoomUser, e
 	return roomUsers, nil
 }
 
+func (r *RoomRepository) GetRoomsByUserID(id int) ([]types.Room, error) {
+	var roomUsers []types.RoomUser
+	err := r.db.Where("user_id = ?", id).Find(&roomUsers).Error
+	if err != nil {
+		log.Printf("Unable to get room users: %v", err)
+		return nil, err
+	}
+
+	roomIDs := make([]uuid.UUID, 0)
+	for _, roomUser := range roomUsers {
+		roomIDs = append(roomIDs, roomUser.RoomID)
+	}
+
+	var rooms []types.Room
+	err = r.db.Where("id IN (?)", roomIDs).Find(&rooms).Error
+	if err != nil {
+		log.Printf("Unable to get room users: %v", err)
+		return nil, err
+	}
+
+	return rooms, nil
+}
+
 func (r *RoomRepository) UpdateRoom(id uuid.UUID, updates map[string]interface{}) error {
 	err := r.db.Model(&types.Room{}).Where("id = ?", id).Updates(updates).Error
 	if err != nil {
