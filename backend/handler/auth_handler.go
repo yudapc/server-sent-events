@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"chat-app-backend/repository"
@@ -9,6 +10,7 @@ import (
 	"chat-app-backend/types"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -43,6 +45,12 @@ func (h *AuthHandler) Register(c echo.Context) error {
 }
 
 func (h *AuthHandler) Login(c echo.Context) error {
+	godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
+	secretKey := os.Getenv("SECRET_KEY")
+
 	var user types.User
 	if err := c.Bind(&user); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
@@ -63,7 +71,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	claims["username"] = storedUser.Username
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
-	t, err := token.SignedString([]byte("secret"))
+	t, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Error signing token"})
 	}

@@ -2,12 +2,13 @@
 // import logo from './logo.svg';
 import { useEffect, useState } from 'react';
 import './App.css';
-import Chat from './Chat';
+import Room from './Room';
 
 function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const apiHost = process.env.REACT_APP_API_HOST;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -23,7 +24,7 @@ function App() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    fetch('http://localhost:8080/login', {
+    fetch(`${apiHost}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -33,19 +34,16 @@ function App() {
       localStorage.setItem('token', data.token);
       localStorage.setItem('username', data.user.username);
       setIsLoggedIn(true);
+    }).catch(() => {
+      alert('Login failed');
     });
   };
-  const handleLogout = () => {
-    localStorage.clear();
-    setIsLoggedIn(false);
-    setUsername('');
-  };
+
   return (
     <div className="App">
       {isLoggedIn ? (
         <>
-          <button onClick={handleLogout}>{username} Log out</button>
-          <Chat />
+          <Room />
         </>
       ) : (
         <form onSubmit={handleLogin}>

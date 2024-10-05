@@ -71,8 +71,26 @@ func (h *RoomHandler) GetRooms(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
+	dataRooms := make([]serializer.RoomSerializer, 0)
+	for _, room := range rooms {
+		roomUsers, _ := h.roomRepo.GetRoomUsersByRoomID(room.ID)
+		var username string
+		for _, roomUser := range roomUsers {
+			if roomUser.UserID != int(user.ID) {
+				user, _ := h.userRepo.GetUserByID(roomUser.UserID)
+				username = user.Username
+			}
+		}
+
+		dataRooms = append(dataRooms, serializer.RoomSerializer{
+			ID:       room.ID,
+			Name:     room.Name,
+			Username: username,
+		})
+	}
+
 	response := map[string]interface{}{
-		"rooms": rooms,
+		"rooms": dataRooms,
 	}
 
 	return c.JSON(http.StatusOK, response)

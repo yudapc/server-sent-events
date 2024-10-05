@@ -1,18 +1,41 @@
 package db
 
 import (
-	"chat-app-backend/types"
+	"fmt"
 	"log"
+	"os"
+
+	"chat-app-backend/types"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/joho/godotenv"
 )
 
 func InitDB() *gorm.DB {
-	var err error
+	godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
+
+	dbDriver := os.Getenv("DB_DRIVER")
+	dbURL := os.Getenv("DB_URL")
+
 	// DB, err := gorm.Open("sqlite3", "./database.db")
-	dsn := "dev:dev1122x@tcp(127.0.0.1:3306)/server_sents?charset=utf8mb4&parseTime=True&loc=Local"
-	DB, err := gorm.Open("mysql", dsn)
+	// dsn := dbURL
+
+	var dsn string
+	switch dbDriver {
+	case "mysql":
+		dsn = fmt.Sprintf("%s?charset=utf8&parseTime=True&loc=Local", dbURL)
+	case "sqlite3":
+		dsn = dbURL
+	default:
+		log.Fatalf("Unsupported DB_DRIVER: %s", dbDriver)
+	}
+
+	DB, err := gorm.Open(dbDriver, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}

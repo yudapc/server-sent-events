@@ -1,12 +1,15 @@
 package main
 
 import (
+	"os"
+
 	"chat-app-backend/db"
 	"chat-app-backend/handler"
 	"chat-app-backend/repository"
 	"chat-app-backend/sse"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -24,10 +27,16 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
+	godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
+	secretKey := os.Getenv("SECRET_KEY")
+
 	// JWT middleware configuration
 	config := middleware.JWTConfig{
 		Claims:     &jwt.StandardClaims{},
-		SigningKey: []byte("secret"), // replace "secret" with your actual secret key
+		SigningKey: []byte(secretKey),
 	}
 
 	// initiate repository
@@ -62,7 +71,8 @@ func main() {
 	messages.PUT("/:id", chatHandler.UpdateMessage)
 
 	// Route events
-	e.GET("/events/:roomid", sse.SSEHandler)
+	events := e.Group("/events")
+	events.GET("/:roomid", sse.SSEHandler)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8080"))

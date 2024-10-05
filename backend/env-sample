@@ -1,0 +1,10 @@
+# mysql
+# DB_DRIVER=mysql
+# DB_URL=username:password@tcp(127.0.0.1:3306)/databasename
+
+# sqlite
+DB_DRIVER=sqlite3
+DB_URL=./database.db
+
+# jwt
+SECRET_KEY=secret
