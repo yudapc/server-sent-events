@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 
 function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
   const [content, setContent] = useState('');
+  const apiHost = process.env.REACT_APP_API_HOST;
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    fetch('http://localhost:8080/messages', {
+    fetch(`${apiHost}/messages`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
