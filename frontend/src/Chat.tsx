@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import MessageForm from './MessageForm';
 import RenderIf from './components/RenderIf';
+import { requestNotificationPermission, showNotification } from './helpers/notification';
 
 function Chat({ roomID, handleBack }: any) {
   const [messages, setMessages] = useState<any>([]);
@@ -38,6 +39,14 @@ function Chat({ roomID, handleBack }: any) {
       eventSource.addEventListener('newMessage', function (event) {
         const newMessage = JSON.parse(event.data);
         setMessages((prevMessages: any) => [...prevMessages, newMessage]);
+        if (me !== newMessage.username) {
+          const options = {
+            body: `${newMessage.username}: ${newMessage.content}`,
+            icon: './logo.svg', // Optional icon
+            vibrate: [200, 100, 200], // Optional vibration pattern for mobile devices
+          };
+          showNotification('New Message', options);
+        }
       });
 
       eventSource.addEventListener('updateMessage', function (event) {
@@ -63,13 +72,18 @@ function Chat({ roomID, handleBack }: any) {
     }
   }, [messages]);
 
+  useEffect(() => {
+    // Request notification permission when the component mounts
+    requestNotificationPermission();
+  }, []);
+
   return (
     <div>
       <RenderIf isTrue={Boolean(roomID)}>
         <>
           <div>
-          <a href="#" onClick={() => handleBack()}>Back</a>
-          <h1>Chat</h1>
+            <a href="#" onClick={() => handleBack()}>Back</a>
+            <h1>Chat</h1>
           </div>
           <ul ref={messagesEndRef} style={{ listStyleType: 'none', height: 'auto', padding: 0 }}>
             {messages.map((message: any) => (
