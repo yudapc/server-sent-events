@@ -43,6 +43,8 @@ func (h *RoomHandler) CreateRoom(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Database execution error"})
 	}
 
+	// TODO validate when room user with userTo exist with same room
+
 	room := types.Room{
 		Name: payload.Name,
 	}

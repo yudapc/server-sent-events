@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"strings"
 
 	"chat-app-backend/db"
 	"chat-app-backend/handler"
@@ -18,16 +19,18 @@ func main() {
 	db := db.InitDB()
 
 	e := echo.New()
+	godotenv.Load()
+
+	allowedOrigins := strings.Split(os.Getenv("ALLOWED_ORIGINS"), ",")
 
 	// Middleware
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: allowedOrigins,
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
-	godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }

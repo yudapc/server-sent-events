@@ -5,6 +5,9 @@ import './App.css';
 import Room from './Room';
 
 function App() {
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerUsername, setRegisterUsername] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,6 +42,25 @@ function App() {
     });
   };
 
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    fetch(`${apiHost}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: registerEmail, username: registerUsername, password: registerPassword }),
+    }).then(res => res.json()).then((data) => {
+      alert('Register success');
+      setRegisterEmail('');
+      setRegisterUsername('');
+      setRegisterPassword('');
+    }).catch(() => {
+      alert('Register failed');
+    });
+  };
+
   return (
     <div className="App">
       {isLoggedIn ? (
@@ -46,25 +68,67 @@ function App() {
           <Room />
         </>
       ) : (
-        <form onSubmit={handleLogin}>
-          <label>
-            Username:
-            <input
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
-          </label>
-          <label>
-            Password:
-            <input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
-          </label>
-          <input type="submit" value="Log in" />
-        </form>
+        <>
+          <h2>Login</h2>
+          <form onSubmit={handleLogin}>
+            <div>
+              <label>
+                Username:
+                <input
+                  type="text"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Password:
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </label>
+              <input type="submit" value="Log in" />
+            </div>
+          </form>
+          <br />
+          <h2>Register</h2>
+          <form onSubmit={handleRegister}>
+            <div>
+              <label>
+                Email:
+                <input
+                  type="email"
+                  value={registerEmail}
+                  onChange={e => setRegisterEmail(e.target.value)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Username:
+                <input
+                  type="text"
+                  value={registerUsername}
+                  onChange={e => setRegisterUsername(e.target.value)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Password:
+                <input
+                  type="password"
+                  value={registerPassword}
+                  onChange={e => setRegisterPassword(e.target.value)}
+                />
+              </label>
+              <input type="submit" value="Log in" />
+            </div>
+          </form>
+        </>
       )}
     </div>
   );

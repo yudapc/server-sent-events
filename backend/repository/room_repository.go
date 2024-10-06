@@ -2,6 +2,7 @@ package repository
 
 import (
 	"log"
+	"time"
 
 	"chat-app-backend/types"
 
@@ -107,12 +108,7 @@ func (r *RoomRepository) UpdateRoom(id uuid.UUID, updates map[string]interface{}
 }
 
 func (r *RoomRepository) DeleteRoom(id uuid.UUID) error {
-	err := r.db.Delete(&types.Room{}, id).Error
-	if err != nil {
-		log.Printf("Unable to delete room with ID %s: %v", id, err)
-		return err
-	}
-	return nil
+	return r.UpdateRoom(id, map[string]interface{}{"deleted_at": time.Now()})
 }
 
 func (r *RoomRepository) AddUserToRoom(roomUser *types.RoomUser) error {

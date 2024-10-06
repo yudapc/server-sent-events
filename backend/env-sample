@@ -5,6 +5,7 @@
 # sqlite
 DB_DRIVER=sqlite3
 DB_URL=./database.db
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000
 
 # jwt
 SECRET_KEY=secret
