@@ -1,6 +1,9 @@
 # Start from the official Golang base image
 FROM golang:1.21.10-alpine3.20 as builder
 
+# Install gcc and sqlite
+RUN apk add --no-cache gcc musl-dev sqlite-dev
+
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -14,20 +17,23 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
+RUN GOOS=linux go build -ldflags="-s -w" -o main
 
 ######## Start a new stage from scratch #######
-FROM debian:buster-slim
+FROM golang:1.21.10-alpine3.20
 
-RUN apt-get update && apt-get install -y \
-    ca-certificates \
-    sqlite3 \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk --no-cache add ca-certificates sqlite-libs
 
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
+
+# Set environment variables
+ENV DB_DRIVER=sqlite3
+ENV DB_URL=./database.db
+ENV ALLOWED_ORIGINS=http://localhost:3000,httplocalhost:8000
+ENV SECRET_KEY=secret
 
 # Expose port 8080 to the outside world
 EXPOSE 8080

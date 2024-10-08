@@ -1,0 +1,4 @@
+database.db
+env-sample
+.env
+docker-compose.yml
