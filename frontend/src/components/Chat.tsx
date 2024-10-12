@@ -168,8 +168,11 @@ function Chat({ roomID, handleBack }: any) {
                   : messageDate.toLocaleString();
 
                 const nextMessage = messages[index + 1];
-                const isLastBeforeChange =
+                const isNextAfterChange =
                   nextMessage?.username !== message.username || nextMessage?.username === undefined;
+                const prevMessage = messages[index - 1];
+                const isPrevBeforeChange =
+                  prevMessage?.username !== message.username || prevMessage?.username === undefined;
 
                 return (
                   <ListItem
@@ -177,12 +180,17 @@ function Chat({ roomID, handleBack }: any) {
                     textAlign={me === message.username ? 'right' : 'left'}
                     mt="5px"
                   >
+                    <RenderIf isTrue={isPrevBeforeChange}>
+                      <Text fontSize={12}>
+                        <strong>{me === message.username ? 'You' : ''}</strong>
+                      </Text>
+                    </RenderIf>
                     <Box
                       bg={me === message.username ? '#e3ffca' : 'white'}
                       borderRadius="lg"
                       borderBottomRightRadius={me === message.username ? '4px' : 'lg'}
                       borderBottomLeftRadius={me !== message.username ? '4px' : 'lg'}
-                      p="2"
+                      p="1"
                       ml={me === message.username ? 'auto' : '0'}
                       textAlign={me === message.username ? 'right' : 'left'}
                       display="inline-block"
@@ -190,14 +198,19 @@ function Chat({ roomID, handleBack }: any) {
                       position="relative"
                       boxShadow="0px 3px 6px #00000029"
                     >
-                      <Text fontSize={12}>
-                        <strong>{me === message.username ? 'You' : message.username}</strong>{' '}
-                        {displayDate}
-                      </Text>
-                      <Box fontSize="12px">
+                      <Box
+                        fontSize="12px"
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="space-between"
+                        height="100%"
+                      >
                         <ReactMarkdown>{message.content}</ReactMarkdown>
+                        <Text fontSize={10} textAlign="right">
+                          {displayDate}
+                        </Text>
                       </Box>
-                      <RenderIf isTrue={isLastBeforeChange}>
+                      <RenderIf isTrue={isNextAfterChange}>
                         <Box
                           position="absolute"
                           bottom="-10px"
