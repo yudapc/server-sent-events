@@ -105,7 +105,7 @@ function Room() {
       <RenderIf isTrue={selectedRoomID === ''}>
         
           <Box width="100%">
-            <Flex position="sticky" top="0" bg="white" p="2" zIndex="1" alignItems="center" justifyContent="space-between">
+            <Flex position="sticky" top="0" bg="#f4f4f4" p="2" zIndex="1" alignItems="center" justifyContent="space-between" mt="-25px" ml="-25px" mr="-25px" mb="15px">
               <Button onClick={() => handleLogout()}>Logout</Button>
               <Text fontSize="xl">Contact</Text>
               <IconButton

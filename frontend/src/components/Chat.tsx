@@ -111,13 +111,13 @@ function Chat({ roomID, handleBack }: any) {
       <Box width="100%" flex="1" maxH={`calc(${height}-250vh)`} >
         <RenderIf isTrue={Boolean(roomID)}>
           <>
-            <Flex position="sticky" top="0" bg="white" p="2" zIndex="1" alignItems="center" justifyContent="space-between">
+            <Flex position="sticky" top="0" bg="#f4f4f4" p="2" zIndex="1" alignItems="center" justifyContent="space-between" mt="-25px" ml="-25px" mr="-25px">
               <ArrowBackIcon onClick={handleBackButton} cursor="pointer" fontSize="24px" />
-              <Text fontSize="xl">{userPartner}</Text>
+              <Text fontSize="xl" fontWeight="bold">{userPartner}</Text>
               <Text />
             </Flex>
-            <List spacing={3}>
-              {messages.map((message: any) => {
+            <List mt="3px">
+              {messages.map((message: any, index: number) => {
                 const messageDate = new Date(message.timestamp);
                 const today = new Date();
 
@@ -128,22 +128,45 @@ function Chat({ roomID, handleBack }: any) {
                 const displayDate = isToday ?
                   new Intl.DateTimeFormat('default', { hour: '2-digit', minute: '2-digit' }).format(messageDate) :
                   messageDate.toLocaleString();
+
+                const nextMessage = messages[index + 1];
+                const isLastBeforeChange = (nextMessage?.username !== message.username || nextMessage?.username === undefined);
+
                 return (
-                  <ListItem key={message.id} textAlign={me === message.username ? 'right' : 'left'}>
+                  <ListItem key={message.id} textAlign={me === message.username ? 'right' : 'left'} mt="3px">
                     <Box
                       bg={me === message.username ? 'green.200' : 'yellow.200'}
                       borderRadius="lg"
+                      borderBottomRightRadius={me === message.username ? '4px' : 'lg'}
+                      borderBottomLeftRadius={me !== message.username ? '4px' : 'lg'}
                       p="2"
                       ml={me === message.username ? 'auto' : '0'}
                       textAlign={me === message.username ? 'right' : 'left'}
                       display="inline-block"
                       maxWidth="90%"
+                      position="relative"
                     >
-                      <Text fontSize={13}>
+                      <Text fontSize={12}>
                         <strong>{me === message.username ? 'You' : message.username}</strong>{' '}
                         {displayDate}
                       </Text>
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      <Box fontSize="12px">
+                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                      </Box>
+                      <RenderIf isTrue={isLastBeforeChange}>
+                        <Box
+                          position="absolute"
+                          bottom="-10px"
+                          right={me === message.username ? '-6px' : 'unset'}
+                          left={me === message.username ? 'unset' : '-6px'}
+                          width="0"
+                          height="0"
+                          borderRight={me === message.username ? '10px solid transparent' : 'unset'}
+                          borderLeft={me === message.username ? 'unset' : '10px solid transparent'}
+                          borderTop={`10px solid ${me === message.username ? '#9ae6b4' : '#faf089'}`}
+                          borderBottom="10px solid transparent"
+                        />
+                      </RenderIf>
                     </Box>
                   </ListItem>
                 )
