@@ -233,25 +233,23 @@ function Chat({ roomID, handleBack }: any) {
           </>
         </RenderIf>
       </Box>
-      <RenderIf isTrue={messages.length > 0}>
-        <Flex
-          position="sticky"
-          bottom="0"
-          bg="white"
-          p="2"
-          zIndex="1"
-          w="100%"
-          background="transparent"
-        >
-          <MessageForm
-            token={token}
-            roomID={roomID}
-            messagesEndRef={messagesEndRef}
-            countMessages={messages.length}
-            setHeight={setHeight}
-          />
-        </Flex>
-      </RenderIf>
+      <Flex
+        position="sticky"
+        bottom="0"
+        bg="white"
+        p="2"
+        zIndex="1"
+        w="100%"
+        background="transparent"
+      >
+        <MessageForm
+          token={token}
+          roomID={roomID}
+          messagesEndRef={messagesEndRef}
+          countMessages={messages.length}
+          setHeight={setHeight}
+        />
+      </Flex>
     </VStack>
   );
 }
