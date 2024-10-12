@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import MessageForm from './MessageForm';
 import RenderIf from './RenderIf';
 import { requestNotificationPermission, showNotification } from '../helpers/notification';
@@ -14,6 +14,7 @@ function Chat({ roomID, handleBack }: any) {
   const [userPartner, setUserPartner] = useState('');
   const messagesEndRef = React.useRef<HTMLUListElement | null>(null);
   const apiHost = process.env.REACT_APP_API_HOST;
+  const [height, setHeight] = useState("100vh");
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -79,8 +80,15 @@ function Chat({ roomID, handleBack }: any) {
   }, [token, roomID]);
 
   useEffect(() => {
+    const countMessages = messages.length;
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      if (countMessages < 4) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setHeight((countMessages * 15) + 'vh');
+      } else {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        setHeight((countMessages * 10) + 'vh');
+      }
     }
   }, [messages]);
 
@@ -89,13 +97,22 @@ function Chat({ roomID, handleBack }: any) {
     requestNotificationPermission();
   }, []);
 
+
+  const handleBackButton = () => {
+    setHeight("100vh");
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      handleBack();
+    }, 500);
+  };
+
   return (
-    <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
-      <Box width="100%" flex="1" overflowY="auto">
+    <VStack width="100%" height={`calc(${height}-250vh)`} padding="1" spacing="1" justifyContent="space-between">
+      <Box width="100%" flex="1" maxH={`calc(${height}-250vh)`} >
         <RenderIf isTrue={Boolean(roomID)}>
           <>
             <Flex position="sticky" top="0" bg="white" p="2" zIndex="1" alignItems="center" justifyContent="space-between">
-              <ArrowBackIcon onClick={() => handleBack()} cursor="pointer" fontSize="24px" />
+              <ArrowBackIcon onClick={handleBackButton} cursor="pointer" fontSize="24px" />
               <Text fontSize="xl">{userPartner}</Text>
               <Text />
             </Flex>
@@ -137,7 +154,7 @@ function Chat({ roomID, handleBack }: any) {
         </RenderIf>
       </Box>
       <Flex position="sticky" bottom="0" bg="white" p="2" zIndex="1" width="100%">
-        <MessageForm token={token} roomID={roomID} />
+        <MessageForm token={token} roomID={roomID} messagesEndRef={messagesEndRef} countMessages={messages.length} setHeight={setHeight} />
       </Flex>
     </VStack>
   );

@@ -2,7 +2,15 @@ import { Button, Textarea } from '@chakra-ui/react';
 import axios from 'axios';
 import { useState } from 'react';
 
-function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
+interface MessageFormProps {
+  token: string;
+  roomID: string;
+  messagesEndRef: React.RefObject<HTMLUListElement>;
+  countMessages: number;
+  setHeight: (height: string) => void;
+}
+
+function MessageForm({ token, roomID, messagesEndRef, countMessages, setHeight }: MessageFormProps) {
   const [content, setContent] = useState('');
   const apiHost = process.env.REACT_APP_API_HOST;
 
@@ -19,6 +27,18 @@ function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
         setContent('');
       } catch (error) {
         console.error('An error occurred while sending the message:', error);
+      }
+    }
+  };
+
+  const handleOnFocus = () => {
+    if (messagesEndRef.current) {
+      if (countMessages < 4) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setHeight((countMessages * 15) + 'vh');
+      } else {
+        messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        setHeight((countMessages * 11) + 'vh');
       }
     }
   };
@@ -41,6 +61,7 @@ function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
             handleSubmit(e);
           }
         }}
+        onFocus={handleOnFocus}
       />
       <Button type="submit" width="100%" mt="5px">Send</Button>
     </form>
