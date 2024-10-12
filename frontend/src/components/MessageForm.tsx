@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { Button, Textarea } from '@chakra-ui/react';
+import  { useState } from 'react';
 
 function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
   const [content, setContent] = useState('');
@@ -18,14 +19,22 @@ function MessageForm({ token, roomID }: { token: string; roomID: string; }) {
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-      <input
-        type="text"
+      <Textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Type a message..."
-        style={{ width: '90%', height: '100px' }}
+        style={{
+          width: '100%', height: '100px', border: '1px solid #a5a5a5',
+          borderRadius: '10px',
+          padding: '5px'
+        }}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            handleSubmit(e);
+          }
+        }}
       />
-      <button type="submit" style={{ height: '105px', marginLeft: '5px' }}>Send</button>
+      <Button type="submit" width="100%" mt="5px">Send</Button>
     </form>
   );
 }
