@@ -92,6 +92,7 @@ function Room() {
         console.log(response.data);
         setSelectedRoomID(response.data.id);
         setIsAddRoom(false);
+        setTo('');
         refetchRooms();
       }
     } catch (error) {
@@ -128,7 +129,6 @@ function Room() {
             zIndex="1"
             alignItems="center"
             justifyContent="space-between"
-            mt="-25px"
             mb="35px"
           >
             <Button onClick={() => handleLogout()}>Logout</Button>
