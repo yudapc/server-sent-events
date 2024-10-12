@@ -178,7 +178,7 @@ function Chat({ roomID, handleBack }: any) {
                     mt="5px"
                   >
                     <Box
-                      bg={me === message.username ? 'green.200' : 'yellow.200'}
+                      bg={me === message.username ? '#e3ffca' : 'white'}
                       borderRadius="lg"
                       borderBottomRightRadius={me === message.username ? '4px' : 'lg'}
                       borderBottomLeftRadius={me !== message.username ? '4px' : 'lg'}
@@ -207,7 +207,7 @@ function Chat({ roomID, handleBack }: any) {
                           height="0"
                           borderRight={me === message.username ? '10px solid transparent' : 'unset'}
                           borderLeft={me === message.username ? 'unset' : '10px solid transparent'}
-                          borderTop={`10px solid ${me === message.username ? '#9ae6b4' : '#faf089'}`}
+                          borderTop={`10px solid ${me === message.username ? '#e3ffca' : 'white'}`}
                           borderBottom="10px solid transparent"
                         />
                       </RenderIf>
