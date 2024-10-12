@@ -1,4 +1,4 @@
-import { ChakraProvider, VStack } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -38,16 +38,14 @@ function App() {
         <RenderIf isTrue={isLoggedIn}>
           <Room />
         </RenderIf>
-        <VStack width="100%" pt="10" height="100vh" justifyContent="space-between">
-          <Box width="80%">
-            <RenderIf isTrue={showLoginForm}>
-              <LoginForm onRegisterClick={onRegisterClick} />
-            </RenderIf>
-            <RenderIf isTrue={showRegisterForm}>
-              <RegisterForm onLoginClick={onLoginClick} />
-            </RenderIf>
-          </Box>
-        </VStack>
+        <Box maxW="400px">
+          <RenderIf isTrue={showLoginForm}>
+            <LoginForm onRegisterClick={onRegisterClick} />
+          </RenderIf>
+          <RenderIf isTrue={showRegisterForm}>
+            <RegisterForm onLoginClick={onLoginClick} />
+          </RenderIf>
+        </Box>
       </Box>
     </ChakraProvider>
   );
