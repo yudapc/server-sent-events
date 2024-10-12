@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
 import RenderIf from './RenderIf';
+import axios from 'axios';
 
 type RegisterFormInterface = {
   onLoginClick: () => void;
@@ -20,24 +21,20 @@ const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
     }
   }, []);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    fetch(`${apiHost}/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: registerEmail, username: registerUsername, password: registerPassword }),
-    }).then(res => res.json()).then((data) => {
+  
+    try {
+      await axios.post(`${apiHost}/register`, { email: registerEmail, username: registerUsername, password: registerPassword });
+  
       alert('Register success');
       setRegisterEmail('');
       setRegisterUsername('');
       setRegisterPassword('');
       onLoginClick();
-    }).catch(() => {
+    } catch (error) {
       alert('Register failed');
-    });
+    }
   };
 
   return (

@@ -5,6 +5,7 @@ import { requestNotificationPermission, showNotification } from '../helpers/noti
 import { Box, Flex, List, ListItem, Text, VStack } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import ReactMarkdown from 'react-markdown';
+import axios from 'axios';
 
 function Chat({ roomID, handleBack }: any) {
   const [messages, setMessages] = useState<any>([]);
@@ -29,16 +30,19 @@ function Chat({ roomID, handleBack }: any) {
   useEffect(() => {
     if (token && roomID) {
       // Fetch existing messages
-      fetch(`${apiHost}/rooms/${roomID}`, {
+      axios.get(`${apiHost}/rooms/${roomID}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       })
-        .then(res => res.json())
-        .then(data => {
+        .then(response => {
+          const data = response.data;
           setMessages(data.messages);
           const partner = data.users.find((user: any) => user.username !== me);
           setUserPartner(partner.username || '');
+        })
+        .catch(error => {
+          console.error('An error occurred while fetching the room:', error);
         });
 
       // Connect to SSE
@@ -87,7 +91,7 @@ function Chat({ roomID, handleBack }: any) {
 
   return (
     <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
-      <Box width="100%">
+      <Box width="100%" flex="1" overflowY="auto">
         <RenderIf isTrue={Boolean(roomID)}>
           <>
             <Flex position="sticky" top="0" bg="white" p="2" zIndex="1" alignItems="center" justifyContent="space-between">
@@ -108,7 +112,6 @@ function Chat({ roomID, handleBack }: any) {
                   new Intl.DateTimeFormat('default', { hour: '2-digit', minute: '2-digit' }).format(messageDate) :
                   messageDate.toLocaleString();
                 return (
-
                   <ListItem key={message.id} textAlign={me === message.username ? 'right' : 'left'}>
                     <Box
                       bg={me === message.username ? 'green.200' : 'yellow.200'}

@@ -1,6 +1,7 @@
 import { FC, memo, useEffect, useState } from 'react';
 import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
 import RenderIf from './RenderIf';
+import axios from 'axios';
 
 type LoginFormProps = {
   onRegisterClick: () => void;
@@ -23,25 +24,21 @@ const LoginForm: FC<LoginFormProps> = ({ onRegisterClick }) => {
     }
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    fetch(`${apiHost}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    }).then(res => res.json()).then((data) => {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('username', data.user.username);
+  
+    try {
+      const response = await axios.post(`${apiHost}/login`, { username, password });
+  
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', response.data.user.username);
       setIsLoggedIn(true);
       setTimeout(() => {
         window.location.reload();
       }, 500);
-    }).catch(() => {
+    } catch (error) {
       alert('Login failed');
-    });
+    }
   };
 
   return (

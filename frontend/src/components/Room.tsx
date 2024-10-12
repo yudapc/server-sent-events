@@ -4,7 +4,7 @@ import Chat from './Chat';
 import { Box, Flex, VStack, Text, Button, FormControl, FormLabel, Input, InputGroup, InputRightAddon } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
-import PullToRefresh from 'react-pull-to-refresh';
+import axios from 'axios';
 
 function Room() {
   const [rooms, setRooms] = useState<any>([]);
@@ -25,18 +25,13 @@ function Room() {
   const refetchRooms = async () => {
     const accessToken = await localStorage.getItem('token');
     try {
-      const response = await fetch(`${apiHost}/rooms`, {
+      const response = await axios.get(`${apiHost}/rooms`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`
         }
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setRooms(data.rooms);
+      setRooms(response.data.rooms);
     } catch (error) {
       console.error('An error occurred while fetching rooms:', error);
     }
@@ -61,52 +56,54 @@ function Room() {
     window.location.reload();
   };
 
-  const handleAddRoom = (e: React.FormEvent) => {
+  const handleAddRoom = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    fetch(`${apiHost}/rooms`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ name: `${username}-${to}`, to }),
-    }).then(res => res.json()).then((data) => {
-      if (data.error) {
+    try {
+      const response = await axios.post(`${apiHost}/rooms`, { name: `${username}-${to}`, to }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.error) {
         alert('Create room failed');
         setTimeout(() => {
           window.location.reload();
         }, 500);
+      } else {
+        console.log(response.data);
+        setSelectedRoomID(response.data.id);
+        setIsAddRoom(false);
+        refetchRooms();
       }
-      console.log(data);
-      setSelectedRoomID(data.id);
-      setIsAddRoom(false);
-      refetchRooms();
-    }).catch(() => {
+    } catch (error) {
       alert('Create room failed');
       setTimeout(() => {
         window.location.reload();
       }, 500);
-    });
+    }
   };
 
-  const handleDeleteRoom = (roomID: string) => {
-    fetch(`${apiHost}/rooms/${roomID}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }).then(res => res.json()).then((data) => {
+  const handleDeleteRoom = async (roomID: string) => {
+    try {
+      await axios.delete(`${apiHost}/rooms/${roomID}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
       setRooms(rooms.filter((room: any) => room.id !== roomID));
-    }).catch(() => {
+    } catch (error) {
       alert('Delete room failed');
-    });
+    }
   };
 
   return (
-    <PullToRefresh onRefresh={() => refetchRooms()}>
-      <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
-        <RenderIf isTrue={selectedRoomID === ''}>
+    <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
+      <RenderIf isTrue={selectedRoomID === ''}>
+        
           <Box width="100%">
             <Flex position="sticky" top="0" bg="white" p="2" zIndex="1" alignItems="center" justifyContent="space-between">
               <Button onClick={() => handleLogout()}>Logout</Button>
@@ -139,7 +136,6 @@ function Room() {
               </FormControl>
             </RenderIf>
             <RenderIf isTrue={!isAddRoom}>
-
               <ul style={{ listStyleType: 'none', height: 'auto', padding: 0 }}>
                 {rooms && rooms.map((room: any) => (
                   <li
@@ -162,16 +158,16 @@ function Room() {
                   </li>
                 ))}
               </ul>
-
             </RenderIf>
           </Box>
-        </RenderIf>
+        
+      </RenderIf>
 
-        <RenderIf isTrue={Boolean(selectedRoomID)}>
-          <Chat roomID={selectedRoomID} handleBack={handleBack} />
-        </RenderIf>
-      </VStack>
-    </PullToRefresh>
+      <RenderIf isTrue={Boolean(selectedRoomID)}>
+        <Chat roomID={selectedRoomID} handleBack={handleBack} />
+      </RenderIf>
+    </VStack>
+
   );
 }
 

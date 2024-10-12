@@ -31,8 +31,8 @@ COPY --from=builder /app/main .
 
 # Set environment variables
 ENV DB_DRIVER=sqlite3
-ENV DB_URL=./database.db
-ENV ALLOWED_ORIGINS=http://localhost:3000,httplocalhost:8000
+ENV DB_URL=/root/database.db
+ENV ALLOWED_ORIGINS=*
 ENV SECRET_KEY=secret
 
 # Expose port 8080 to the outside world
