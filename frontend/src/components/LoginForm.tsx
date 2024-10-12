@@ -1,11 +1,12 @@
-import { FC, memo, useEffect, useState } from 'react';
-import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
-import RenderIf from './RenderIf';
+import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import axios from 'axios';
+import { FC, memo, useEffect, useState } from 'react';
+
+import RenderIf from './RenderIf';
 
 type LoginFormProps = {
   onRegisterClick: () => void;
-}
+};
 
 const LoginForm: FC<LoginFormProps> = ({ onRegisterClick }) => {
   const [username, setUsername] = useState('');
@@ -26,10 +27,10 @@ const LoginForm: FC<LoginFormProps> = ({ onRegisterClick }) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post(`${apiHost}/login`, { username, password });
-  
+
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('username', response.data.user.username);
       setIsLoggedIn(true);
@@ -48,35 +49,22 @@ const LoginForm: FC<LoginFormProps> = ({ onRegisterClick }) => {
         <form onSubmit={handleLogin}>
           <FormControl id="username" mb={4}>
             <FormLabel>Username:</FormLabel>
-            <Input
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-            />
+            <Input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           </FormControl>
           <FormControl id="password" mb={4}>
             <FormLabel>Password:</FormLabel>
-            <Input
-              type="password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </FormControl>
           <Button type="submit" colorScheme="blue" width="full">
             Log in
           </Button>
-          <Button
-            onClick={onRegisterClick}
-            colorScheme="teal"
-            width="full"
-            mt={4}
-          >
+          <Button onClick={onRegisterClick} colorScheme="teal" width="full" mt={4}>
             Register
           </Button>
         </form>
       </Box>
     </RenderIf>
   );
-}
+};
 
 export default memo(LoginForm);

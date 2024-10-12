@@ -1,10 +1,22 @@
-import { useState, useEffect } from 'react';
-import RenderIf from './RenderIf';
-import Chat from './Chat';
-import { Box, Flex, VStack, Text, Button, FormControl, FormLabel, Input, InputGroup, InputRightAddon } from '@chakra-ui/react';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { IconButton } from '@chakra-ui/react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+
+import Chat from './Chat';
+import RenderIf from './RenderIf';
 
 function Room() {
   const [rooms, setRooms] = useState<any>([]);
@@ -27,15 +39,15 @@ function Room() {
     try {
       const response = await axios.get(`${apiHost}/rooms`, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       setRooms(response.data.rooms);
     } catch (error) {
       console.error('An error occurred while fetching rooms:', error);
     }
-  }
+  };
 
   useEffect(() => {
     if (token) {
@@ -45,7 +57,7 @@ function Room() {
 
   const handleSelectedRoom = (roomID: string) => {
     setSelectedRoomID(roomID);
-  }
+  };
 
   const handleBack = () => {
     setSelectedRoomID('');
@@ -60,12 +72,16 @@ function Room() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${apiHost}/rooms`, { name: `${username}-${to}`, to }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+      const response = await axios.post(
+        `${apiHost}/rooms`,
+        { name: `${username}-${to}`, to },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (response.data.error) {
         alert('Create room failed');
@@ -90,8 +106,8 @@ function Room() {
     try {
       await axios.delete(`${apiHost}/rooms/${roomID}`, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       setRooms(rooms.filter((room: any) => room.id !== roomID));
@@ -103,41 +119,49 @@ function Room() {
   return (
     <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
       <RenderIf isTrue={selectedRoomID === ''}>
-        
-          <Box width="100%">
-            <Flex position="sticky" top="0" bg="#f4f4f4" p="2" zIndex="1" alignItems="center" justifyContent="space-between" mt="-25px" ml="-25px" mr="-25px" mb="15px">
-              <Button onClick={() => handleLogout()}>Logout</Button>
-              <Text fontSize="xl">Contact</Text>
-              <IconButton
-                aria-label={`${isAddRoom ? 'Cancel' : ''} Add Room`}
-                icon={!isAddRoom ? <AddIcon /> : <MinusIcon />}
-                onClick={() => setIsAddRoom(!isAddRoom)}
-              />
-            </Flex>
-            <RenderIf isTrue={isAddRoom}>
-              <FormControl>
-                <FormLabel>To</FormLabel>
-                <InputGroup>
-                  <Input
-                    type='text'
-                    placeholder="To"
-                    value={to}
-                    onChange={e => setTo(e.target.value)}
-                  />
+        <Box width="100%">
+          <Flex
+            position="sticky"
+            top="0"
+            bg="#f4f4f4"
+            p="2"
+            zIndex="1"
+            alignItems="center"
+            justifyContent="space-between"
+            mt="-25px"
+            ml="-25px"
+            mr="-25px"
+            mb="15px"
+          >
+            <Button onClick={() => handleLogout()}>Logout</Button>
+            <Text fontSize="xl">Contact</Text>
+            <IconButton
+              aria-label={`${isAddRoom ? 'Cancel' : ''} Add Room`}
+              icon={!isAddRoom ? <AddIcon /> : <MinusIcon />}
+              onClick={() => setIsAddRoom(!isAddRoom)}
+            />
+          </Flex>
+          <RenderIf isTrue={isAddRoom}>
+            <FormControl>
+              <FormLabel>To</FormLabel>
+              <InputGroup>
+                <Input
+                  type="text"
+                  placeholder="To"
+                  value={to}
+                  onChange={(e) => setTo(e.target.value)}
+                />
 
-                  <InputRightAddon>
-                    <IconButton
-                      aria-label="Add Room"
-                      icon={<AddIcon />}
-                      onClick={handleAddRoom}
-                    />
-                  </InputRightAddon>
-                </InputGroup>
-              </FormControl>
-            </RenderIf>
-            <RenderIf isTrue={!isAddRoom}>
-              <ul style={{ listStyleType: 'none', height: 'auto', padding: 0 }}>
-                {rooms && rooms.map((room: any) => (
+                <InputRightAddon>
+                  <IconButton aria-label="Add Room" icon={<AddIcon />} onClick={handleAddRoom} />
+                </InputRightAddon>
+              </InputGroup>
+            </FormControl>
+          </RenderIf>
+          <RenderIf isTrue={!isAddRoom}>
+            <ul style={{ listStyleType: 'none', height: 'auto', padding: 0 }}>
+              {rooms &&
+                rooms.map((room: any) => (
                   <li
                     key={room.id}
                     style={{
@@ -152,22 +176,32 @@ function Room() {
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <a href="#" onClick={() => handleSelectedRoom(room.id)} style={{ textDecoration: 'none', display: 'block', width: '80%' }}>{room.username}</a>
-                      <a href="#" onClick={() => handleDeleteRoom(room.id)} style={{ textDecoration: 'none' }}>(X)</a>
+                      <a
+                        href="#"
+                        onClick={() => handleSelectedRoom(room.id)}
+                        style={{ textDecoration: 'none', display: 'block', width: '80%' }}
+                      >
+                        {room.username}
+                      </a>
+                      <a
+                        href="#"
+                        onClick={() => handleDeleteRoom(room.id)}
+                        style={{ textDecoration: 'none' }}
+                      >
+                        (X)
+                      </a>
                     </div>
                   </li>
                 ))}
-              </ul>
-            </RenderIf>
-          </Box>
-        
+            </ul>
+          </RenderIf>
+        </Box>
       </RenderIf>
 
       <RenderIf isTrue={Boolean(selectedRoomID)}>
         <Chat roomID={selectedRoomID} handleBack={handleBack} />
       </RenderIf>
     </VStack>
-
   );
 }
 

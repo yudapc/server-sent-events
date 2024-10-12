@@ -1,11 +1,12 @@
-import { FC, useEffect, useState } from 'react';
-import { Box, FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
-import RenderIf from './RenderIf';
+import { Box, Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import axios from 'axios';
+import { FC, useEffect, useState } from 'react';
+
+import RenderIf from './RenderIf';
 
 type RegisterFormInterface = {
   onLoginClick: () => void;
-}
+};
 
 const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
   const [registerEmail, setRegisterEmail] = useState('');
@@ -23,10 +24,14 @@ const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     try {
-      await axios.post(`${apiHost}/register`, { email: registerEmail, username: registerUsername, password: registerPassword });
-  
+      await axios.post(`${apiHost}/register`, {
+        email: registerEmail,
+        username: registerUsername,
+        password: registerPassword,
+      });
+
       alert('Register success');
       setRegisterEmail('');
       setRegisterUsername('');
@@ -47,7 +52,7 @@ const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
             <Input
               type="email"
               value={registerEmail}
-              onChange={e => setRegisterEmail(e.target.value)}
+              onChange={(e) => setRegisterEmail(e.target.value)}
             />
           </FormControl>
           <FormControl id="username" mb={4}>
@@ -55,7 +60,7 @@ const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
             <Input
               type="text"
               value={registerUsername}
-              onChange={e => setRegisterUsername(e.target.value)}
+              onChange={(e) => setRegisterUsername(e.target.value)}
             />
           </FormControl>
           <FormControl id="password" mb={4}>
@@ -63,24 +68,19 @@ const RegisterForm: FC<RegisterFormInterface> = ({ onLoginClick }) => {
             <Input
               type="password"
               value={registerPassword}
-              onChange={e => setRegisterPassword(e.target.value)}
+              onChange={(e) => setRegisterPassword(e.target.value)}
             />
           </FormControl>
           <Button type="submit" colorScheme="blue" width="full">
             Register
           </Button>
-          <Button
-            onClick={onLoginClick}
-            colorScheme="teal"
-            width="full"
-            mt={4}
-          >
+          <Button onClick={onLoginClick} colorScheme="teal" width="full" mt={4}>
             Back to Login
           </Button>
         </form>
       </Box>
     </RenderIf>
   );
-}
+};
 
 export default RegisterForm;

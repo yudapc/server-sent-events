@@ -1,11 +1,12 @@
+import { ChakraProvider } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+
 import './App.css';
-import Room from './components/Room';
-import { ChakraProvider } from "@chakra-ui/react";
-import { Box } from "@chakra-ui/react";
-import RenderIf from './components/RenderIf';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import RenderIf from './components/RenderIf';
+import Room from './components/Room';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

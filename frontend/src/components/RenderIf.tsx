@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 interface IProps {
   isTrue: boolean;
@@ -6,6 +6,6 @@ interface IProps {
 }
 const RenderIf: FC<IProps> = ({ isTrue, children }): any => {
   return isTrue ? children : null;
-}
+};
 
 export default RenderIf;
