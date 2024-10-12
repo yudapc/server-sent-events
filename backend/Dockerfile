@@ -26,6 +26,9 @@ RUN apk --no-cache add ca-certificates sqlite-libs
 
 WORKDIR /root/
 
+# Create an empty database.db file
+RUN touch database.db
+
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 

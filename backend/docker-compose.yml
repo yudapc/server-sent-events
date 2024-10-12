@@ -9,7 +9,7 @@ services:
     environment:
       - DB_DRIVER=sqlite3
       - DB_URL=/root/database.db
-      - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000
+      - ALLOWED_ORIGINS=*
       - SECRET_KEY=secret
 
   caddy:
