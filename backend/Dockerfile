@@ -27,14 +27,15 @@ RUN apk --no-cache add ca-certificates sqlite-libs
 WORKDIR /root/
 
 # Create an empty database.db file
-RUN touch database.db
+RUN mkdir temp
+RUN touch temp/database.db
 
 # Copy the Pre-built binary file from the previous stage
 COPY --from=builder /app/main .
 
 # Set environment variables
 ENV DB_DRIVER=sqlite3
-ENV DB_URL=/root/database.db
+ENV DB_URL=/root/temp/database.db
 ENV ALLOWED_ORIGINS=*
 ENV SECRET_KEY=secret
 

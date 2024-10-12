@@ -3,3 +3,4 @@ env-sample
 .env
 docker-compose.yml
 Caddyfile
+temp/*.db

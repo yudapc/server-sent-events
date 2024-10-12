@@ -5,20 +5,28 @@ services:
     ports:
       - 8080
     volumes:
-      - ./database.db:/root/database.db
+      - ./temp:/root/temp
     environment:
       - DB_DRIVER=sqlite3
-      - DB_URL=/root/database.db
+      - DB_URL=/root/temp/database.db
       - ALLOWED_ORIGINS=*
       - SECRET_KEY=secret
 
   caddy:
     image: caddy:2.0.0
-    restart: always
+    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./scripts/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./scripts/caddy/data/site:/srv
+      - ./scripts/caddy/data/caddy_data:/data
+      - ./scripts/caddy/data/caddy_config:/config
     depends_on:
       - app
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:
