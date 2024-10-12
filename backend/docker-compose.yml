@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - 8080
     volumes:
       - ./database.db:/root/database.db
     environment:
@@ -11,3 +11,14 @@ services:
       - DB_URL=/root/database.db
       - ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8000
       - SECRET_KEY=secret
+
+  caddy:
+    image: caddy:2.0.0
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - app
