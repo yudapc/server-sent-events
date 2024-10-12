@@ -1,4 +1,4 @@
-import { AddIcon, MinusIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, MinusIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -117,7 +117,7 @@ function Room() {
   };
 
   return (
-    <VStack width="100%" height="100vh" padding="1" spacing="1" justifyContent="space-between">
+    <VStack width="100%" height="100vh" justifyContent="space-between">
       <RenderIf isTrue={selectedRoomID === ''}>
         <Box width="100%">
           <Flex
@@ -129,9 +129,7 @@ function Room() {
             alignItems="center"
             justifyContent="space-between"
             mt="-25px"
-            ml="-25px"
-            mr="-25px"
-            mb="15px"
+            mb="35px"
           >
             <Button onClick={() => handleLogout()}>Logout</Button>
             <Text fontSize="xl">Contact</Text>
@@ -142,12 +140,12 @@ function Room() {
             />
           </Flex>
           <RenderIf isTrue={isAddRoom}>
-            <FormControl>
+            <FormControl p="10px">
               <FormLabel>To</FormLabel>
               <InputGroup>
                 <Input
                   type="text"
-                  placeholder="To"
+                  placeholder="Input username"
                   value={to}
                   onChange={(e) => setTo(e.target.value)}
                 />
@@ -183,13 +181,12 @@ function Room() {
                       >
                         {room.username}
                       </a>
-                      <a
-                        href="#"
+                      <IconButton
+                        aria-label="Delete room"
+                        icon={<DeleteIcon />}
                         onClick={() => handleDeleteRoom(room.id)}
-                        style={{ textDecoration: 'none' }}
-                      >
-                        (X)
-                      </a>
+                        w="10px"
+                      />
                     </div>
                   </li>
                 ))}

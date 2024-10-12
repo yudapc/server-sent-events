@@ -34,11 +34,11 @@ function App() {
 
   return (
     <ChakraProvider>
-      <Box className="App" p={4}>
+      <Box>
         <RenderIf isTrue={isLoggedIn}>
           <Room />
         </RenderIf>
-        <Box maxW="400px" margin="auto">
+        <Box maxW="400px">
           <RenderIf isTrue={showLoginForm}>
             <LoginForm onRegisterClick={onRegisterClick} />
           </RenderIf>

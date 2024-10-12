@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Box, Flex, List, ListItem, Text, VStack } from '@chakra-ui/react';
+import { Box, Flex, IconButton, List, ListItem, Text, VStack } from '@chakra-ui/react';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -116,6 +116,11 @@ function Chat({ roomID, handleBack }: any) {
       padding="1"
       spacing="1"
       justifyContent="space-between"
+      style={{
+        backgroundImage: "url('/icons/background-chat.png')", // Replace with your image path
+        backgroundRepeat: 'repeat',
+        backgroundSize: 'auto',
+      }}
     >
       <Box width="100%" flex="1" maxH={`calc(${height}-250vh)`}>
         <RenderIf isTrue={Boolean(roomID)}>
@@ -123,22 +128,29 @@ function Chat({ roomID, handleBack }: any) {
             <Flex
               position="sticky"
               top="0"
-              bg="#f4f4f4"
+              bg="transparent"
               p="2"
               zIndex="1"
               alignItems="center"
               justifyContent="space-between"
               mt="-25px"
-              ml="-25px"
-              mr="-25px"
+              ml="-5px"
+              mr="-5px"
             >
-              <ArrowBackIcon onClick={handleBackButton} cursor="pointer" fontSize="24px" />
+              <IconButton
+                aria-label="Back button"
+                icon={<ArrowBackIcon fontSize="24px" />}
+                onClick={handleBackButton}
+                cursor="pointer"
+                isRound
+                bg="gray.200"
+              />
               <Text fontSize="xl" fontWeight="bold">
                 {userPartner}
               </Text>
               <Text />
             </Flex>
-            <List mt="3px">
+            <List mt="3px" pl="10px" pr="10px">
               {messages.map((message: any, index: number) => {
                 const messageDate = new Date(message.timestamp);
                 const today = new Date();
@@ -163,7 +175,7 @@ function Chat({ roomID, handleBack }: any) {
                   <ListItem
                     key={message.id}
                     textAlign={me === message.username ? 'right' : 'left'}
-                    mt="3px"
+                    mt="5px"
                   >
                     <Box
                       bg={me === message.username ? 'green.200' : 'yellow.200'}
@@ -176,6 +188,7 @@ function Chat({ roomID, handleBack }: any) {
                       display="inline-block"
                       maxWidth="90%"
                       position="relative"
+                      boxShadow="0px 3px 6px #00000029"
                     >
                       <Text fontSize={12}>
                         <strong>{me === message.username ? 'You' : message.username}</strong>{' '}
@@ -207,15 +220,25 @@ function Chat({ roomID, handleBack }: any) {
           </>
         </RenderIf>
       </Box>
-      <Flex position="sticky" bottom="0" bg="white" p="2" zIndex="1" w="100%">
-        <MessageForm
-          token={token}
-          roomID={roomID}
-          messagesEndRef={messagesEndRef}
-          countMessages={messages.length}
-          setHeight={setHeight}
-        />
-      </Flex>
+      <RenderIf isTrue={messages.length > 0}>
+        <Flex
+          position="sticky"
+          bottom="0"
+          bg="white"
+          p="2"
+          zIndex="1"
+          w="100%"
+          background="transparent"
+        >
+          <MessageForm
+            token={token}
+            roomID={roomID}
+            messagesEndRef={messagesEndRef}
+            countMessages={messages.length}
+            setHeight={setHeight}
+          />
+        </Flex>
+      </RenderIf>
     </VStack>
   );
 }

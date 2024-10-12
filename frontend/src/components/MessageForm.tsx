@@ -58,7 +58,7 @@ function MessageForm({
 
   return (
     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-      <Box display="flex" alignItems="stretch" ml="-25px" mr="-25px" pt="5px">
+      <Box display="flex" alignItems="stretch" pt="5px">
         <TextareaAutosize
           value={content}
           onChange={(e) => setContent(e.target.value)}
