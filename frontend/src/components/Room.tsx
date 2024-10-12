@@ -92,6 +92,7 @@ function Room() {
         console.log(response.data);
         setSelectedRoomID(response.data.id);
         setIsAddRoom(false);
+        setTo('');
         refetchRooms();
       }
     } catch (error) {
@@ -117,9 +118,9 @@ function Room() {
   };
 
   return (
-    <VStack width="100%" height="100vh" justifyContent="space-between">
+    <VStack width="100%" justifyContent="space-between">
       <RenderIf isTrue={selectedRoomID === ''}>
-        <Box width="100%">
+        <Box width="100%" flex="1">
           <Flex
             position="sticky"
             top="0"
@@ -128,8 +129,7 @@ function Room() {
             zIndex="1"
             alignItems="center"
             justifyContent="space-between"
-            mt="-25px"
-            mb="35px"
+            mb="15px"
           >
             <Button onClick={() => handleLogout()}>Logout</Button>
             <Text fontSize="xl">Contact</Text>
