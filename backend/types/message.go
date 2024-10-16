@@ -9,7 +9,7 @@ import (
 
 type Message struct {
 	gorm.Model
-	Content   text      `json:"content"`
+	Content   string    `json:"content" gorm:"type:text"`
 	Timestamp time.Time `json:"timestamp"`
 	RoomID    uuid.UUID `gorm:"type:char(36); json:"room_id"`
 	UserID    int       `json:"user_id"`

@@ -52,15 +52,19 @@ function Chat({ roomID, handleBack }: any) {
       const eventSource = new EventSource(`${apiHost}/events/${roomID}`);
 
       eventSource.addEventListener('newMessage', function (event) {
-        const newMessage = JSON.parse(event.data);
-        setMessages((prevMessages: any) => [...prevMessages, newMessage]);
-        if (me !== newMessage.username) {
-          const options = {
-            body: `${newMessage.username}: ${newMessage.content}`,
-            icon: './logo.svg', // Optional icon
-            vibrate: [200, 100, 200], // Optional vibration pattern for mobile devices
-          };
-          showNotification('New Message', options);
+        try {
+          const newMessage = JSON.parse(event.data);
+          setMessages((prevMessages: any) => [...prevMessages, newMessage]);
+          if (me !== newMessage.username) {
+            const options = {
+              body: `${newMessage.username}: ${newMessage.content}`,
+              icon: './logo.svg', // Optional icon
+              vibrate: [200, 100, 200], // Optional vibration pattern for mobile devices
+            };
+            showNotification('New Message', options);
+          }
+        } catch (error) {
+          console.error('An error occurred while parsing newMessage:', error);
         }
       });
 
@@ -162,9 +166,9 @@ function Chat({ roomID, handleBack }: any) {
 
                 const displayDate = isToday
                   ? new Intl.DateTimeFormat('default', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    }).format(messageDate)
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  }).format(messageDate)
                   : messageDate.toLocaleString();
 
                 const nextMessage = messages[index + 1];
